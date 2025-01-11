@@ -49,7 +49,7 @@ function App() {
         </button>
 
         {visible && (
-          <div className="model-overlay">
+          <div className="model">
             <div className="model-content">
               <form onSubmit={handleSummit}>
                 <h3>Fill Details</h3>

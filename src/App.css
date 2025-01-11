@@ -18,7 +18,7 @@ button{
 }
 
 /* Add styles for the modal */
-.model-overlay {
+.model {
   position: fixed;
   top: 0; /* Position the modal at the top */
   left: 0;
