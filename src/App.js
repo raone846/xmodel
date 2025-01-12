@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 function App() {
   const [visible, setVisible] = useState(false);
-  const toggleModel = () => setVisible(!visible);
+  const modalRef = useRef(null);
+
+  const toggleModal = () => setVisible(!visible);
+
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -16,7 +19,7 @@ function App() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSummit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(formData.email)) {
@@ -38,68 +41,87 @@ function App() {
     }
 
     alert('Form submitted successfully!');
+    setVisible(false); // Close modal on successful submission
   };
+
+  const handleClickOutside = (event) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+      setVisible(false);
+    }
+  };
+
+  useEffect(() => {
+    if (visible) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [visible]);
 
   return (
     <div className="App">
       <div>
         <h1>User Details Modal</h1>
-        <button type="submit" onClick={toggleModel}>
+        <button type="button" onClick={toggleModal}>
           Open Form
         </button>
 
         {visible && (
           <div className="modal">
-            <div className="modal-content">
-              <form onSubmit={handleSummit}>
+            <div className="modal-content" ref={modalRef}>
+              <form onSubmit={handleSubmit}>
                 <h3>Fill Details</h3>
                 <div>
-                    <label htmlFor="username">Username:</label>
-                    <input
-                      type="text"
-                      id="username"
-                      name="username"
-                      required
-                      value={formData.username}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="email">Email:</label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="phone">Phone Number:</label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      required
-                      value={formData.phone}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="dob">Date of Birth:</label>
-                    <input
-                      type="date"
-                      id="dob"
-                      name="dob"
-                      required
-                      value={formData.dob}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <button type="submit" className="submit-button">
-                    Submit
-                  </button>
+                  <label htmlFor="username">Username:</label>
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    required
+                    value={formData.username}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email">Email:</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="phone">Phone Number:</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    required
+                    value={formData.phone}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="dob">Date of Birth:</label>
+                  <input
+                    type="date"
+                    id="dob"
+                    name="dob"
+                    required
+                    value={formData.dob}
+                    onChange={handleChange}
+                  />
+                </div>
+                <button type="submit" className="submit-button">
+                  Submit
+                </button>
               </form>
             </div>
           </div>
